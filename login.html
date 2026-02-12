@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title> SmartLibrary | realtime academic portal</title>
+  <!-- Tailwind (lightweight) + custom layer -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter font – premium readability -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 Pro (free tier, but pro feel) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Chart.js for crisp analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ---------- IIT‑LEVEL DESIGN SYSTEM ---------- */
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a1a2f;
+      color: #ffffff;
+      transition: background 0.2s ease, color 0.2s;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    body.dark {
+      background: #030e17;
+      color: #eef5ff;
+    }
+
+    /* 🧊 PREMIUM GLASS – frosted with depth */
+    .glass-iit {
+      background: rgba(15, 30, 45, 0.65);
+      backdrop-filter: blur(18px) saturate(200%);
+      -webkit-backdrop-filter: blur(18px) saturate(200%);
+      border: 1px solid rgba(45, 212, 191, 0.18);
+      border-radius: 32px;
+      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.45);
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .dark .glass-iit {
+      background: rgba(5, 18, 28, 0.8);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+    }
+
+    /* ✨ EMERALD + SOFT PURPLE GLOW (hover) */
+    .hover-premium {
+      transition: all 0.2s ease;
+    }
+    .hover-premium:hover {
+      box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.5), 0 0 30px 8px rgba(192, 132, 252, 0.45);
+      transform: translateY(-5px);
+      border-color: rgba(45,212,191,0.6);
+    }
+
+    /* 💧 RIPPLE – smooth, professional */
+    .ripple-iit {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple-iit:after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(12,12);
+      opacity: 0;
+      transition: transform .4s, opacity .6s;
+      pointer-events: none;
+    }
+    .ripple-iit:active:after {
+      transform: scale(0,0);
+      opacity: 0.3;
+      transition: 0s;
+    }
+
+    /* 🎯 COUNTER – gradient digit */
+    .counter-iit {
+      font-feature-settings: "tnum";
+      font-weight: 800;
+      background: linear-gradient(145deg, #e2f3fc, #c6f7ed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+    .dark .counter-iit {
+      background: linear-gradient(145deg, #b4f0e6, #9ee2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 📜 custom scroll – IIT subtle */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(45,212,191,0.05); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #2dd4bf; border-radius: 10px; }
+
+    /* ⏳ loader */
+    .spinner-iit {
+      border: 3px solid rgba(45,212,191,0.15);
+      border-top: 3px solid #2dd4bf;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 🎭 login float */
+    @keyframes floatIIT {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    .float-iit { animation: floatIIT 7s infinite ease-in-out; }
+
+    /* 🔵 online pulsing dot */
+    .pulse-iit {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+      animation: pulse-iit 2s infinite;
+    }
+    @keyframes pulse-iit {
+      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+      70% { box-shadow: 0 0 0 10px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+
+    /* mobile refinement */
+    @media (max-width: 640px) {
+      .glass-iit { border-radius: 26px; }
+    }
+
+    /* book cover placeholder – elegant gradient */
+    .book-cover-iit {
+      background: linear-gradient(145deg, #1d4a5f, #103141);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+    }
+  </style>
+</head>
+<body class="antialiased overflow-x-hidden transition-colors duration-300">
+
+<div id="app" class="min-h-screen w-full relative flex"></div>
+
+<script>
+  // ---------- 🗄️ IIT‑GRADE MOCK DATABASE (REAL‑TIME READY) ----------
+  const DB = {
+    books: [
+      { id: 'b1', title: "Deep Learning (Adaptive Computation)", author: "Ian Goodfellow", category: "AI", type: "ebook", views: 4120, downloads: 2890, rating: 4.9, fileUrl: "#", fileSize: "18.2 MB", year: 2016, publisher: "MIT Press", cover: "📘", issn: null, availability: true },
+      { id: 'b2', title: "Distributed Systems, 4th Ed", author: "Maarten van Steen", category: "Engineering", type: "book", views: 2380, downloads: 1120, rating: 4.7, fileUrl: "", fileSize: null, year: 2023, publisher: "Amazon", cover: "📕", issn: null, availability: true },
+      { id: 'b3', title: "Nature Neuroscience Review", author: "Kandel et al.", category: "Science", type: "journal", views: 5230, downloads: 3150, rating: 4.9, fileUrl: "#", fileSize: "2.4 MB", year: 2025, publisher: "Nature Research", cover: "📓", issn: "1546-1726", availability: true },
+      { id: 'b4', title: "Reinforcement Learning: An Introduction", author: "Sutton & Barto", category: "AI", type: "ebook", views: 6840, downloads: 4910, rating: 5.0, fileUrl: "#", fileSize: "11.7 MB", year: 2018, publisher: "MIT Press", cover: "🤖", issn: null, availability: true },
+      { id: 'b5', title: "ACM Computing Surveys", author: "ACM", category: "CS", type: "journal", views: 3670, downloads: 1890, rating: 4.6, fileUrl: "#", fileSize: "3.1 MB", year: 2024, publisher: "ACM", cover: "📙", issn: "0360-0300", availability: true },
+      { id: 'b6', title: "Modern Operating Systems", author: "Tanenbaum", category: "Engineering", type: "book", views: 2910, downloads: 1340, rating: 4.7, fileUrl: "", fileSize: null, year: 2015, publisher: "Pearson", cover: "📗", issn: null, availability: false },
+      { id: 'b7', title: "Artificial Intelligence: A Modern Approach", author: "Russell/Norvig", category: "AI", type: "ebook", views: 9120, downloads: 6780, rating: 4.9, fileUrl: "#", fileSize: "22.5 MB", year: 2020, publisher: "Pearson", cover: "🧠", issn: null, availability: true },
+      { id: 'b8', title: "The Lancet Digital Health", author: "Elsevier", category: "Science", type: "journal", views: 2080, downloads: 1150, rating: 4.4, fileUrl: "#", fileSize: "1.9 MB", year: 2025, publisher: "Elsevier", cover: "📒", issn: "2589-7500", availability: true },
+      { id: 'b9', title: "Clean Code: A Handbook", author: "Robert C. Martin", category: "Engineering", type: "ebook", views: 5730, downloads: 4120, rating: 4.8, fileUrl: "#", fileSize: "6.3 MB", year: 2008, publisher: "Prentice Hall", cover: "📐", issn: null, availability: true },
+      { id: 'b10', title: "IEEE TPAMI", author: "IEEE", category: "CS", type: "journal", views: 3150, downloads: 1700, rating: 4.7, fileUrl: "#", fileSize: "2.8 MB", year: 2024, publisher: "IEEE", cover: "📘", issn: "0162-8828", availability: true },
+      { id: 'b11', title: "Introduction to Algorithms (CLRS)", author: "Cormen et al.", category: "CS", type: "book", views: 4890, downloads: 2730, rating: 4.9, fileUrl: "", fileSize: null, year: 2022, publisher: "MIT Press", cover: "📏", issn: null, availability: true },
+      { id: 'b12', title: "Cell Biology", author: "Alberts", category: "Science", type: "ebook", views: 1540, downloads: 690, rating: 4.5, fileUrl: "#", fileSize: "34 MB", year: 2019, publisher: "Garland", cover: "🔬", issn: null, availability: true },
+    ],
+    users: [
+      { id: 101, name: "Alice Chen", email: "alice@iit.edu", password: "pass", role: "student", department: "CSE", lastLogin: "2026-02-12 09:22", isOnline: true },
+      { id: 102, name: "Abhi Ram", email: "faculty@iit.edu", password: "pass", role: "faculty", department: "Data Science", lastLogin: "2026-02-12 10:05", isOnline: true },
+      { id: 103, name: "Bob Smith", email: "bob@iit.edu", password: "pass", role: "student", department: "EE", lastLogin: "2026-02-11 23:12", isOnline: false },
+      { id: 104, name: "Prof. Linda Park", email: "linda@iit.edu", password: "pass", role: "faculty", department: "AI Research", lastLogin: "2026-02-12 08:40", isOnline: true },
+      { id: 105, name: "Maya Singh", email: "maya@iit.edu", password: "pass", role: "student", department: "Mechanical", lastLogin: "2026-02-12 11:18", isOnline: true },
+    ],
+    activities: [
+      { userId: 101, bookId: 'b7', accessedAt: "2026-02-12 10:30", timeSpent: 12, downloaded: true },
+      { userId: 101, bookId: 'b4', accessedAt: "2026-02-12 09:45", timeSpent: 5, downloaded: false },
+      { userId: 102, bookId: 'b1', accessedAt: "2026-02-12 11:00", timeSpent: 20, downloaded: true },
+      { userId: 105, bookId: 'b9', accessedAt: "2026-02-12 08:15", timeSpent: 7, downloaded: true },
+      { userId: 101, bookId: 'b3', accessedAt: "2026-02-11 22:10", timeSpent: 15, downloaded: false },
+      { userId: 104, bookId: 'b5', accessedAt: "2026-02-12 09:00", timeSpent: 9, downloaded: true },
+    ]
+  };
+
+  // ---------- SESSION ----------
+  let currentUser = JSON.parse(sessionStorage.getItem('iit_smartlib')) || null;
+  let activeRoute = window.location.hash.slice(1) || 'login';
+
+  // ---------- REALTIME SIMULATION (every 12s) ----------
+  setInterval(() => {
+    DB.books.forEach(b => { if (Math.random() > 0.7) b.views += 1; });
+    DB.users.forEach(u => { if (Math.random() > 0.85) u.isOnline = !u.isOnline; });
+    if (document.getElementById('dashboard-counters')) renderDashboardCounters();
+    if (activeRoute === 'analytics' && window.dailyChart) updateCharts();
+    if (activeRoute === 'active-users') renderActiveUsersPage();
+  }, 12000);
+
+  // ---------- HELPERS ----------
+  const getOnlineCount = () => DB.users.filter(u => u.isOnline).length;
+  const getTotalBooks = () => DB.books.length;
+  const getEbooksCount = () => DB.books.filter(b => b.type === 'ebook').length;
+  const getJournalsCount = () => DB.books.filter(b => b.type === 'journal').length;
+  const getTrendingBooks = () => [...DB.books].sort((a,b) => b.views - a.views).slice(0,5);
+  const getUserRecent = (uid) => DB.activities.filter(a => a.userId === uid).sort((a,b)=> new Date(b.accessedAt)-new Date(a.accessedAt)).slice(0,5);
+  const getBookById = (id) => DB.books.find(b => b.id === id);
+
+  // ---------- SMOOTH COUNTER (RAF) ----------
+  function animateCounter(el, target, duration = 1000) {
+    if (!el) return;
+    let current = 0, inc = target / (duration / 16), timer;
+    const frame = () => {
+      current += inc;
+      if (current >= target) { el.innerText = target; cancelAnimationFrame(timer); return; }
+      el.innerText = Math.floor(current);
+      timer = requestAnimationFrame(frame);
+    };
+    timer = requestAnimationFrame(frame);
+  }
+
+  // ---------- LOGIN PAGE – IIT STYLE ----------
+  function renderLogin() {
+    const app = document.getElementById('app');
+    app.innerHTML = `
+      <div class="min-h-screen w-full flex items-center justify-center p-5" style="background: radial-gradient(135% 135% at 20% 30%, #0d2f40, #041016);">
+        <div class="glass-iit w-full max-w-md p-9 md:p-11 float-iit" style="border-top: 4px solid #2dd4bf;">
+          <div class="text-center mb-9">
+            <div class="w-24 h-24 mx-auto bg-gradient-to-br from-emerald-500 to-blue-700 rounded-3xl flex items-center justify-center shadow-2xl mb-6">
+              <i class="fas fa-robot text-5xl text-white"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-emerald-200 to-blue-200 bg-clip-text text-transparent">SmartLibrary</h1>
+            <p class="text-white/50 mt-2 text-sm uppercase tracking-wider">iit · realtime academic hub</p>
+          </div>
+          <form id="loginForm" class="space-y-6">
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-4 top-4.5 text-emerald-300/70 text-lg"></i>
+              <input type="email" id="email" placeholder="iit email" value="faculty@iit.edu" class="w-full py-4 pl-12 pr-5 rounded-2xl bg-white/5 border border-white/20 text-white placeholder:text-white/40 focus:ring-2 focus:ring-emerald-400 outline-none backdrop-blur-sm text-lg">
+            </div>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-4 top-4.5 text-emerald-300/70 text-lg"></i>
+              <input type="password" id="password" placeholder="password" value="pass" class="w-full py-4 pl-12 pr-5 rounded-2xl bg-white/5 border border-white/20 text-white placeholder:text-white/40 focus:ring-2 focus:ring-emerald-400 outline-none backdrop-blur-sm text-lg">
+            </div>
+            <div class="relative">
+              <i class="fas fa-id-card absolute left-4 top-4.5 text-emerald-300/70 text-lg"></i>
+              <select id="role" class="w-full py-4 pl-12 pr-5 rounded-2xl bg-white/5 border border-white/20 text-white appearance-none focus:ring-2 focus:ring-emerald-400 outline-none backdrop-blur-sm text-lg">
+                <option value="student" class="bg-[#0a1a2f]">🎓 Student</option>
+                <option value="faculty" selected class="bg-[#0a1a2f]">👨‍🏫 Faculty</option>
+              </select>
+            </div>
+            <button type="submit" class="relative w-full py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold rounded-2xl ripple-iit transition shadow-xl shadow-emerald-900/50 text-xl tracking-wide">Access portal →</button>
+            <div class="flex justify-between text-sm text-white/40">
+              <a href="#" id="forgotPwd" class="hover:text-emerald-300 transition flex items-center gap-1"><i class="fas fa-key"></i> OTP recovery</a>
+              <span>demo: faculty@iit.edu / pass</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pwd = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const user = DB.users.find(u => u.email === email && u.password === pwd && u.role === role);
+      if (user) {
+        currentUser = user; sessionStorage.setItem('iit_smartlib', JSON.stringify(user));
+        window.location.hash = 'dashboard'; renderRoute('dashboard');
+      } else alert('❌ Invalid credentials — try faculty@iit.edu / pass');
+    });
+    document.getElementById('forgotPwd')?.addEventListener('click', (e) => { e.preventDefault(); alert('📧 OTP sent (simulated).'); });
+  }
+
+  // ---------- SIDEBAR – IIT PREMIUM ----------
+  function renderSidebar() {
+    const isFaculty = currentUser?.role === 'faculty';
+    return `
+      <aside class="glass-iit w-24 md:w-72 p-5 md:p-7 flex flex-col items-center md:items-start h-screen sticky top-0 z-30 mr-1" style="border-right: 2px solid rgba(45,212,191,0.2);">
+        <div class="flex items-center space-x-4 mb-12 mt-3">
+          <div class="w-11 h-11 bg-gradient-to-br from-emerald-500 to-blue-700 rounded-2xl flex items-center justify-center shadow-xl"><i class="fas fa-book-open text-white text-2xl"></i></div>
+          <span class="hidden md:block text-3xl font-black bg-gradient-to-r from-emerald-200 to-blue-200 bg-clip-text text-transparent">iLib</span>
+        </div>
+        <nav class="flex flex-col space-y-6 w-full flex-1">
+          <a href="#dashboard" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10 ${activeRoute==='dashboard'?'bg-white/15 text-emerald-300':''}">
+            <i class="fas fa-chart-pie w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Dashboard</span>
+          </a>
+          <a href="#books" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-book w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">All Books</span>
+          </a>
+          <a href="#ebooks" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-file-pdf w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">E‑Books</span>
+          </a>
+          <a href="#journals" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-scroll w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Journals</span>
+          </a>
+          <a href="#active-users" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-user-check w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Active Users</span>
+          </a>
+          <a href="#trending" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-fire w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Trending</span>
+          </a>
+          <a href="#recent" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-clock w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Recent</span>
+          </a>
+          <a href="#analytics" class="flex items-center space-x-4 text-white/80 hover:text-white p-3.5 rounded-2xl transition-all hover:bg-white/10">
+            <i class="fas fa-chart-line w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Analytics</span>
+          </a>
+          ${isFaculty ? `<a href="#upload" class="flex items-center space-x-4 bg-emerald-900/40 p-3.5 rounded-2xl border border-emerald-500/50">
+            <i class="fas fa-upload w-6 text-emerald-300"></i><span class="hidden md:inline font-medium text-lg">Upload</span>
+          </a>` : ''}
+        </nav>
+        <div class="mt-auto w-full space-y-4 pb-6">
+          <button id="darkToggle" class="flex items-center space-x-4 text-white/70 hover:text-white p-3.5 w-full rounded-2xl hover:bg-white/5">
+            <i class="fas fa-moon w-6"></i><span class="hidden md:inline text-lg">Dark/Light</span>
+          </button>
+          <a href="#logout" id="logoutBtn" class="flex items-center space-x-4 text-rose-300/90 hover:text-rose-200 p-3.5 w-full rounded-2xl hover:bg-white/5">
+            <i class="fas fa-sign-out-alt w-6"></i><span class="hidden md:inline text-lg">Logout</span>
+          </a>
+        </div>
+      </aside>
+    `;
+  }
+
+  // ---------- DASHBOARD – 7 CARDS (LIVE) ----------
+  function renderDashboard() {
+    const app = document.getElementById('app');
+    app.innerHTML = `
+      <div class="flex w-full min-h-screen bg-[#0a1a2f] text-white">
+        ${renderSidebar()}
+        <main class="flex-1 p-7 md:p-10 overflow-y-auto">
+          <div class="mb-10 flex items-center gap-4">
+            <div class="w-16 h-16 bg-emerald-800/30 rounded-2xl flex items-center justify-center">
+              <i class="fas fa-user-graduate text-3xl text-emerald-300"></i>
+            </div>
+            <div>
+              <h2 class="text-3xl md:text-5xl font-light tracking-tight">Welcome, <span class="font-bold bg-gradient-to-r from-emerald-300 to-blue-300 bg-clip-text text-transparent">${currentUser?.name}</span></h2>
+              <p class="text-white/50 flex items-center gap-2 text-lg mt-1"><span class="inline-block w-2.5 h-2.5 bg-emerald-400 rounded-full pulse-iit"></span> ${currentUser?.role === 'faculty' ? 'Faculty · upload privileges' : 'Student · researcher'}</p>
+            </div>
+          </div>
+          <!-- 7 CARDS GRID -->
+          <div id="dashboard-counters" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 auto-rows-fr">
+            <!-- 1 total books -->
+            <a href="#books" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-book-open text-emerald-400 text-4xl"></i><span class="text-6xl font-bold counter-iit" id="totalBooksCounter">0</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">Total Books</p>
+              <span class="text-sm text-emerald-300/80 mt-2 flex items-center">browse collection <i class="fas fa-arrow-right ml-2"></i></span>
+            </a>
+            <!-- 2 ebooks -->
+            <a href="#ebooks" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-file-pdf text-emerald-400 text-4xl"></i><span class="text-6xl font-bold counter-iit" id="ebooksCounter">0</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">E‑Books</p>
+              <span class="text-sm text-emerald-300/80 mt-2">PDF download →</span>
+            </a>
+            <!-- 3 journals -->
+            <a href="#journals" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-scroll text-emerald-400 text-4xl"></i><span class="text-6xl font-bold counter-iit" id="journalsCounter">0</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">Journals</p>
+              <span class="text-sm text-emerald-300/80 mt-2">peer reviewed →</span>
+            </a>
+            <!-- 4 active users -->
+            <a href="#active-users" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-users text-emerald-400 text-4xl"></i><span class="text-6xl font-bold counter-iit" id="activeUsersCounter">0</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">Active Users</p>
+              <span class="text-sm text-emerald-300/80 mt-2">live online →</span>
+            </a>
+            <!-- 5 trending -->
+            <a href="#trending" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-fire text-orange-400 text-4xl"></i><span class="text-6xl font-bold counter-iit">5</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">Trending</p>
+              <span class="text-sm text-emerald-300/80 mt-2">most accessed →</span>
+            </a>
+            <!-- 6 recent -->
+            <a href="#recent" class="glass-iit p-7 hover-premium ripple-iit flex flex-col">
+              <div class="flex justify-between items-start"><i class="fas fa-history text-emerald-400 text-4xl"></i><span class="text-6xl font-bold counter-iit" id="recentCounter">0</span></div>
+              <p class="text-white/90 text-xl mt-3 font-medium">Recent Activity</p>
+              <span class="text-sm text-emerald-300/80 mt-2">your history →</span>
+            </a>
+            <!-- 7 analytics preview -->
+            <a href="#analytics" class="glass-iit p-7 hover-premium ripple-iit flex flex-col row-span-1">
+              <div class="flex items-center gap-3"><i class="fas fa-chart-simple text-emerald-400 text-3xl"></i><span class="text-sm bg-emerald-800/50 px-3 py-1.5 rounded-full font-mono">+5s live</span></div>
+              <div class="mt-2 h-12 w-full"><canvas id="miniChartPreview" width="200" height="50"></canvas></div>
+              <p class="text-white/90 text-xl font-medium mt-1">Analytics</p>
+              <span class="text-sm text-emerald-300/80">realtime graphs →</span>
+            </a>
+          </div>
+        </main>
+      </div>
+    `;
+    animateCounter(document.getElementById('totalBooksCounter'), getTotalBooks(), 900);
+    animateCounter(document.getElementById('ebooksCounter'), getEbooksCount(), 900);
+    animateCounter(document.getElementById('journalsCounter'), getJournalsCount(), 900);
+    animateCounter(document.getElementById('activeUsersCounter'), getOnlineCount(), 900);
+    animateCounter(document.getElementById('recentCounter'), currentUser ? getUserRecent(currentUser.id).length : 0, 900);
+    const ctx = document.getElementById('miniChartPreview')?.getContext('2d');
+    if (ctx) new Chart(ctx, { type: 'line', data: { labels: [1,2,3,4,5], datasets: [{ data: [6,8,5,11,7], borderColor: '#2dd4bf', borderWidth: 2.5, pointRadius: 0, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: true, scales: { x: { display: false }, y: { display: false } } } });
+    attachDarkToggle();
+  }
+
+  function renderDashboardCounters() {
+    animateCounter(document.getElementById('totalBooksCounter'), getTotalBooks(), 600);
+    animateCounter(document.getElementById('ebooksCounter'), getEbooksCount(), 600);
+    animateCounter(document.getElementById('journalsCounter'), getJournalsCount(), 600);
+    animateCounter(document.getElementById('activeUsersCounter'), getOnlineCount(), 600);
+  }
+
+  // ---------- ALL BOOKS – FULL SEARCH, FILTER, PAGINATION (IIT) ----------
+  function renderBooksPage() {
+    const app = document.getElementById('app');
+    app.innerHTML = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 overflow-auto"><div class="flex justify-center mt-20"><div class="spinner-iit"></div></div></main></div>`;
+    setTimeout(() => {
+      let html = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9 overflow-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-9">
+          <h2 class="text-4xl font-bold bg-gradient-to-r from-emerald-300 to-blue-300 bg-clip-text text-transparent"><i class="fas fa-book mr-4"></i>All Books</h2>
+          <div class="flex gap-4 mt-4 md:mt-0 w-full md:w-auto">
+            <input type="text" id="bookSearch" placeholder="Search by title, author..." class="bg-white/10 border border-white/20 p-4 rounded-2xl w-full md:w-72 text-white placeholder:text-white/40 focus:ring-2 focus:ring-emerald-400 outline-none text-lg">
+            <select id="catFilter" class="bg-white/10 border border-white/20 p-4 rounded-2xl text-white focus:ring-2 focus:ring-emerald-400 outline-none text-lg">
+              <option value="" class="bg-[#0a1a2f]">All categories</option>
+              <option class="bg-[#0a1a2f]">AI</option><option class="bg-[#0a1a2f]">Engineering</option><option class="bg-[#0a1a2f]">Science</option><option class="bg-[#0a1a2f]">CS</option>
+            </select>
+          </div>
+        </div>
+        <div id="bookGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7"></div>
+        <div id="paginationControls" class="mt-12 flex justify-center gap-3"></div>
+      </main></div>`;
+      app.innerHTML = html;
+      const grid = document.getElementById('bookGrid');
+      let filtered = [];
+      const renderBooks = (page = 1) => {
+        const search = document.getElementById('bookSearch')?.value.toLowerCase() || '';
+        const cat = document.getElementById('catFilter')?.value || '';
+        filtered = DB.books.filter(b => 
+          (b.title.toLowerCase().includes(search) || b.author.toLowerCase().includes(search)) && 
+          (cat ? b.category === cat : true)
+        );
+        const perPage = 6, start = (page-1)*perPage, paginated = filtered.slice(start, start+perPage);
+        grid.innerHTML = paginated.map(b => `
+          <div class="glass-iit p-6 flex gap-5 items-start hover-premium transition">
+            <div class="book-cover-iit w-20 h-24 text-5xl">${b.cover}</div>
+            <div class="flex-1">
+              <h3 class="font-bold text-white text-xl">${b.title}</h3>
+              <p class="text-white/60 text-md">${b.author}</p>
+              <span class="inline-block mt-2 text-sm px-3 py-1.5 bg-emerald-900/50 rounded-full ${b.availability?'text-emerald-300':'text-amber-400'}">${b.availability?'available':'on hold'}</span>
+              <button class="mt-4 text-sm bg-emerald-800/70 px-5 py-2.5 rounded-full hover:bg-emerald-700 transition font-medium">View details →</button>
+            </div>
+          </div>
+        `).join('');
+        let pages = Math.ceil(filtered.length/perPage);
+        let pgHtml = '';
+        for (let i=1; i<=pages; i++) pgHtml += `<button class="px-5 py-3 rounded-xl text-lg font-medium ${page===i?'bg-emerald-700':'bg-white/10'} hover:bg-emerald-800 transition" data-page="${i}">${i}</button>`;
+        document.getElementById('paginationControls').innerHTML = pgHtml;
+        document.querySelectorAll('#paginationControls button').forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); renderBooks(parseInt(e.target.dataset.page)); }));
+      };
+      renderBooks(1);
+      document.getElementById('bookSearch')?.addEventListener('input', () => renderBooks(1));
+      document.getElementById('catFilter')?.addEventListener('change', () => renderBooks(1));
+    }, 200);
+  }
+
+  // ---------- E-BOOKS PAGE (DOWNLOAD, PREVIEW, RATING) ----------
+  function renderEbooksPage() {
+    const ebooks = DB.books.filter(b => b.type === 'ebook');
+    let html = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <h2 class="text-4xl font-bold mb-8"><i class="fas fa-file-pdf text-emerald-400 mr-4"></i>E‑Books (PDF)</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-7">`;
+    ebooks.forEach(b => { html += `
+      <div class="glass-iit p-7 flex flex-col hover-premium transition">
+        <div class="flex justify-between items-start">
+          <span class="font-bold text-2xl text-white">${b.title}</span>
+          <span class="bg-amber-800/50 px-4 py-2 rounded-full text-amber-300 text-lg font-semibold flex items-center">⭐ ${b.rating}</span>
+        </div>
+        <p class="text-white/70 text-lg mt-2">${b.author} • ${b.fileSize}</p>
+        <div class="flex gap-4 mt-5 flex-1">
+          <button onclick="handleEbookDownload('${b.id}', '${b.title.replace(/'/g, "\\'")}', '${b.type}', '${b.fileSize}')" class="flex-1 bg-emerald-800/80 px-7 py-3 rounded-xl text-lg hover:bg-emerald-700 transition font-semibold cursor-pointer"><i class="fas fa-download mr-2"></i>Download</button>
+          <button onclick="handleEbookPreview('${b.id}', '${b.title.replace(/'/g, "\\'")}', '${b.type}', '${b.author}')" class="flex-1 bg-blue-900/60 px-7 py-3 rounded-xl text-lg hover:bg-blue-800/70 transition font-semibold cursor-pointer"><i class="fas fa-eye mr-2"></i>Preview</button>
+        </div>
+        <p class="text-sm text-white/40 mt-5">📌 Type: ${b.type} | Publisher: ${b.publisher} | Year: ${b.year}</p>
+      </div>
+    `; });
+    html += `</div></main></div>`;
+    document.getElementById('app').innerHTML = html;
+  }
+
+  function handleEbookDownload(id, title, type, fileSize) {
+    const book = getBookById(id);
+    alert(`📥 DOWNLOAD INITIATED\n\n📖 Title: ${title}\n👤 Author: ${book.author}\n📦 File Size: ${fileSize}\n🏢 Publisher: ${book.publisher}\n📌 Type: ${type}\n\n✅ Ready to download (${title}.pdf)`);
+  }
+
+  function handleEbookPreview(id, title, type, author) {
+    const book = getBookById(id);
+    alert(`👁️ PREVIEW MODE\n\n📖 Title: ${title}\n👤 Author: ${author}\n📅 Year: ${book.year}\n🏢 Publisher: ${book.publisher}\n⭐ Rating: ${book.rating}\n📌 Type: ${type}\n\n📖 Previewing first 50 pages...`);
+  }
+
+  // ---------- JOURNALS PAGE (ISSN, FILTER) ----------
+  function renderJournalsPage() {
+    const app = document.getElementById('app');
+    app.innerHTML = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <h2 class="text-4xl font-bold"><i class="fas fa-scroll mr-4"></i>Journals</h2>
+        <select id="journalCatIIT" class="bg-white/10 border border-white/20 p-4 rounded-2xl text-white text-lg mt-3 md:mt-0 focus:ring-2 focus:ring-emerald-400">
+          <option value="All" class="bg-[#0a1a2f]">All disciplines</option>
+          <option class="bg-[#0a1a2f]">Science</option><option class="bg-[#0a1a2f]">Engineering</option><option class="bg-[#0a1a2f]">CS</option><option class="bg-[#0a1a2f]">AI</option>
+        </select>
+      </div>
+      <div id="journalListIIT" class="space-y-5"></div>
+    </main></div>`;
+    const renderJournals = (cat) => {
+      let filtered = DB.books.filter(b => b.type === 'journal' && (cat && cat!=='All' ? b.category === cat : true));
+      document.getElementById('journalListIIT').innerHTML = filtered.map(j => `
+        <div class="glass-iit p-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div>
+            <span class="font-semibold text-2xl text-white">${j.title}</span>
+            <div class="text-white/60 text-lg mt-1">ISSN ${j.issn} • ${j.publisher} • ${j.year}</div>
+          </div>
+          <button class="mt-3 md:mt-0 bg-emerald-800/70 px-7 py-3 rounded-xl text-lg hover:bg-emerald-700 transition"><i class="fas fa-download mr-2"></i>Download</button>
+        </div>
+      `).join('');
+    };
+    renderJournals('All');
+    document.getElementById('journalCatIIT')?.addEventListener('change', e => renderJournals(e.target.value));
+  }
+
+  // ---------- ACTIVE USERS (ROLE BASED) ----------
+  function renderActiveUsersPage() {
+    if (currentUser.role === 'faculty') {
+      let html = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+        <h2 class="text-4xl font-bold mb-8"><i class="fas fa-users mr-4"></i>Active members · faculty view</h2>
+        <div class="space-y-5">`;
+      DB.users.forEach(u => { html += `
+        <div class="glass-iit p-6 flex items-center gap-5">
+          <span class="relative flex h-4 w-4"><span class="animate-ping absolute inline-flex h-full w-full rounded-full ${u.isOnline?'bg-emerald-400':'bg-gray-500'} opacity-80"></span><span class="relative inline-flex rounded-full h-4 w-4 ${u.isOnline?'bg-emerald-500':'bg-gray-500'}"></span></span>
+          <div class="flex-1">
+            <p class="font-bold text-2xl text-white">${u.name} <span class="text-lg bg-indigo-900/60 px-4 py-1.5 rounded-full ml-4">${u.role}</span></p>
+            <p class="text-white/70 text-lg">${u.department} • last login: ${u.lastLogin}</p>
+          </div>
+        </div>
+      `; });
+      html += `</div></main></div>`; document.getElementById('app').innerHTML = html;
+    } else {
+      document.getElementById('app').innerHTML = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+        <div class="glass-iit p-12 text-center max-w-2xl mx-auto">
+          <i class="fas fa-user-shield text-7xl text-emerald-300 mb-6"></i>
+          <p class="text-6xl font-bold counter-iit" id="activeCountSimple">${getOnlineCount()}</p>
+          <p class="text-white/80 text-3xl mt-3 font-light">currently online</p>
+          <p class="text-white/40 text-lg mt-5">(student view – details restricted)</p>
+        </div>
+      </main></div>`;
+      animateCounter(document.getElementById('activeCountSimple'), getOnlineCount(), 800);
+    }
+  }
+
+  // ---------- TRENDING PAGE ----------
+  function renderTrendingPage() {
+    let html = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <h2 class="text-4xl font-bold mb-8"><i class="fas fa-fire text-orange-400 mr-4"></i>Trending this week</h2>
+      <div class="grid gap-6">`;
+    getTrendingBooks().forEach((b,i) => { html += `
+      <div class="glass-iit p-6 flex items-center justify-between hover-premium">
+        <div class="flex items-center gap-6">
+          <span class="text-4xl font-black text-emerald-300/40">#${i+1}</span>
+          <div>
+            <h3 class="font-bold text-2xl text-white">${b.title}</h3>
+            <p class="text-white/70 text-lg">👁️ ${b.views.toLocaleString()} views • ⭐ ${b.rating}</p>
+          </div>
+        </div>
+        <button class="bg-emerald-800/70 px-7 py-3.5 rounded-full text-lg hover:bg-emerald-700 transition font-medium">Quick view</button>
+      </div>
+    `; });
+    html += `</div></main></div>`;
+    document.getElementById('app').innerHTML = html;
+  }
+
+  // ---------- RECENT ACTIVITY PAGE ----------
+  function renderRecentPage() {
+    const rec = getUserRecent(currentUser.id);
+    let html = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <h2 class="text-4xl font-bold mb-8"><i class="fas fa-clock mr-4"></i>My recent activity</h2>
+      <div class="space-y-5">`;
+    if (rec.length===0) html += `<div class="glass-iit p-12 text-center text-white/50 text-2xl">No recent activity</div>`;
+    else rec.forEach(r => { const b = getBookById(r.bookId); html += `
+      <div class="glass-iit p-6 flex justify-between items-center">
+        <div>
+          <span class="font-bold text-2xl text-white">${b?.title}</span>
+          <p class="text-white/60 text-lg">${r.accessedAt} • ${r.timeSpent} min • ${r.downloaded?'⬇️ downloaded':'👁️ viewed'}</p>
+        </div>
+        <button class="text-rose-400/80 hover:text-rose-400 text-xl"><i class="fas fa-trash-alt mr-2"></i>remove</button>
+      </div>
+    `; });
+    html += `</div></main></div>`;
+    document.getElementById('app').innerHTML = html;
+  }
+
+  // ---------- ANALYTICS (LIVE 5S) ----------
+  function renderAnalyticsPage() {
+    const app = document.getElementById('app');
+    app.innerHTML = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <h2 class="text-4xl font-bold mb-9"><i class="fas fa-chart-line mr-4"></i>Analytics · live stream (5s)</h2>
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="glass-iit p-6"><canvas id="lineDailyIIT" style="height:240px; width:100%;"></canvas></div>
+        <div class="glass-iit p-6"><canvas id="barMonthlyIIT" style="height:240px; width:100%;"></canvas></div>
+        <div class="glass-iit p-6 lg:col-span-2"><canvas id="pieCategoryIIT" style="height:260px; width:100%;"></canvas></div>
+      </div>
+    </main></div>`;
+    setTimeout(() => {
+      const line = document.getElementById('lineDailyIIT')?.getContext('2d');
+      const bar = document.getElementById('barMonthlyIIT')?.getContext('2d');
+      const pie = document.getElementById('pieCategoryIIT')?.getContext('2d');
+      if (line) window.dailyChart = new Chart(line, { type: 'line', data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ label: 'daily visits', data: [82,94,108,125,148,139,172], borderColor: '#2dd4bf', backgroundColor: '#2dd4bf20', tension: 0.3, borderWidth: 3 }] }, options: { responsive: true, maintainAspectRatio: true } });
+      if (bar) window.monthlyChart = new Chart(bar, { type: 'bar', data: { labels: ['Jan','Feb','Mar','Apr'], datasets: [{ label: 'downloads', data: [520,610,730,890], backgroundColor: '#818cf8', borderRadius: 8 }] } });
+      if (pie) window.pieChart = new Chart(pie, { type: 'pie', data: { labels: ['AI','Engineering','Science','CS'], datasets: [{ data: [44,26,18,12], backgroundColor: ['#2dd4bf','#818cf8','#f472b6','#fbbf24'] }] } });
+    }, 80);
+    setInterval(() => { 
+      if (activeRoute === 'analytics' && window.dailyChart) {
+        window.dailyChart.data.datasets[0].data = window.dailyChart.data.datasets[0].data.map(v => v + Math.floor(Math.random()*7-2));
+        window.dailyChart.update();
+        window.monthlyChart.data.datasets[0].data = window.monthlyChart.data.datasets[0].data.map(v => v + Math.floor(Math.random()*15-5));
+        window.monthlyChart.update();
+      }
+    }, 5000);
+  }
+
+  // ---------- UPLOAD (FACULTY ONLY) ----------
+  function renderUploadPage() {
+    if (currentUser?.role !== 'faculty') { renderDashboard(); return; }
+    document.getElementById('app').innerHTML = `<div class="flex w-full">${renderSidebar()}<main class="flex-1 p-7 md:p-9">
+      <div class="glass-iit max-w-3xl p-9 mx-auto">
+        <h2 class="text-3xl font-bold mb-7"><i class="fas fa-cloud-upload-alt mr-3 text-emerald-400"></i>Upload academic resource</h2>
+        <div class="space-y-5">
+          <input placeholder="Title" class="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-white text-xl placeholder:text-white/40 focus:ring-2 focus:ring-emerald-400">
+          <input placeholder="Author(s)" class="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-white text-xl placeholder:text-white/40">
+          <select class="w-full bg-white/10 border border-white/20 p-4 rounded-2xl text-white text-xl">
+            <option class="bg-[#0a1a2f]">E-Book</option>
+            <option class="bg-[#0a1a2f]">Journal</option>
+            <option class="bg-[#0a1a2f]">Conference paper</option>
+          </select>
+          <button class="w-full bg-emerald-700 hover:bg-emerald-600 py-5 rounded-2xl text-2xl font-semibold transition shadow-xl">Publish resource</button>
+        </div>
+      </div>
+    </main></div>`;
+  }
+
+  // ---------- DARK MODE ----------
+  function attachDarkToggle() {
+    document.getElementById('darkToggle')?.addEventListener('click', (e) => { e.preventDefault(); document.body.classList.toggle('dark'); });
+  }
+
+  // ---------- ROUTER ----------
+  function renderRoute(route) {
+    if (!currentUser && route !== 'login') { window.location.hash = 'login'; renderLogin(); return; }
+    activeRoute = route;
+    if (route === 'login') renderLogin();
+    else if (route === 'dashboard') renderDashboard();
+    else if (route === 'books') renderBooksPage();
+    else if (route === 'ebooks') renderEbooksPage();
+    else if (route === 'journals') renderJournalsPage();
+    else if (route === 'active-users') renderActiveUsersPage();
+    else if (route === 'trending') renderTrendingPage();
+    else if (route === 'recent') renderRecentPage();
+    else if (route === 'analytics') renderAnalyticsPage();
+    else if (route === 'upload') renderUploadPage();
+    else if (route === 'logout') { sessionStorage.removeItem('iit_smartlib'); currentUser = null; window.location.hash = 'login'; renderLogin(); }
+    else renderDashboard();
+  }
+
+  window.addEventListener('load', () => { if (!window.location.hash) window.location.hash = currentUser ? 'dashboard' : 'login'; renderRoute(window.location.hash.slice(1)); });
+  window.addEventListener('hashchange', () => renderRoute(window.location.hash.slice(1)));
+</script>
+
+</body>
+</html>
